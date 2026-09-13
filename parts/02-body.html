@@ -1,0 +1,56 @@
+<body>
+<!-- ============ 顶部导航 ============ -->
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="#/home" id="brandLink" style="cursor:pointer">
+      <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="var(--brand)"/><path d="M16 20h32v6H16zm0 13h20v6H16zm0 13h26v6H16z" fill="#fff"/></svg>
+      <span>网工真题<small>软考网络工程师备考</small></span>
+    </a>
+    <nav class="nav" id="nav"></nav>
+    <div class="top-right">
+      <button class="icon-btn" id="themeBtn" title="切换深浅主题" aria-label="切换主题"></button>
+      <button class="icon-btn" id="installBtn" title="安装为应用" aria-label="安装应用" style="display:none"></button>
+      <button class="icon-btn" id="settingsBtn" title="设置" aria-label="设置"></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="view-home" class="page"></section>
+  <section id="view-exam-cfg" class="page"></section>
+  <section id="view-exam" class="page"></section>
+  <section id="view-result" class="page"></section>
+  <section id="view-bank" class="page"></section>
+  <section id="view-wrong" class="page"></section>
+  <section id="view-stats" class="page"></section>
+  <section id="view-manage" class="page"></section>
+  <section id="view-settings" class="page"></section>
+</main>
+
+<!-- 考试移动端底部工具条 -->
+<div class="exam-toolbar no-print" id="examToolbar">
+  <div class="et-in">
+    <span class="et-timer" id="etTimer">--:--</span>
+    <span class="muted" id="etProgress">0/0</span>
+    <span style="flex:1"></span>
+    <button class="btn btn-ghost" id="etSheetBtn">答题卡</button>
+    <button class="btn btn-pri" id="etSubmitBtn">交卷</button>
+  </div>
+</div>
+
+<!-- 答题卡抽屉（移动端） -->
+<div class="drawer-mask no-print" id="drawerMask"></div>
+<div class="drawer no-print" id="drawer">
+  <div class="grip"></div>
+  <div id="drawerBody"></div>
+</div>
+
+<!-- 通用弹窗 -->
+<div class="modal-mask no-print" id="modalMask">
+  <div class="modal" id="modal"></div>
+</div>
+
+<div class="toast-wrap no-print" id="toasts"></div>
+
+<script>
+"use strict";
