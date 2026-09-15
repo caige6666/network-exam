@@ -8107,7 +8107,7 @@ function renderBank() {
         '<span class="badge badge-gray">难度 ' + DIFF_TXT[q.diff || 3] + "</span>" +
         '<span class="muted" style="margin-left:auto">#' + esc(q.id) + "</span>" +
       "</div>" +
-      '<div class="qi-stem" data-exp="' + q.id + '">' + esc(q.stem) + "</div>" +
+      '<div class="qi-stem">' + esc(q.stem) + "</div>" +
       (q.options || []).map((o, k) => '<div class="qi-opt"><span class="k">' + "ABCD"[k] + ".</span><span>" + esc(o) + "</span></div>").join("") +
       '<div class="qi-actions">' +
         '<button class="btn btn-ghost mini" data-exp="' + q.id + '">' + (exp ? "收起解析" : "查看解析") + "</button>" +
@@ -8146,7 +8146,7 @@ function renderBank() {
       const id = b.dataset.exp; e.stopPropagation();
       BankUI.exp = BankUI.exp === id ? null : id;
       const item = b.closest(".q-item");
-      if (item) { item.classList.toggle("exp"); const body = item.querySelector(".qi-body"); if (body) body.style.display = BankUI.exp === id ? "block" : "none"; const btn = item.querySelector('[data-exp="' + id + '"]'); if (btn) btn.textContent = BankUI.exp === id ? "收起解析" : "查看解析"; }
+      if (item) { item.classList.toggle("exp"); const body = item.querySelector(".qi-body"); if (body) body.style.display = BankUI.exp === id ? "block" : "none"; const btn = item.querySelector('button[data-exp="' + id + '"]'); if (btn) btn.textContent = BankUI.exp === id ? "收起解析" : "查看解析"; }
     });
     $$("#view-bank [data-fav]").forEach(b => b.onclick = () => {
       const id = b.dataset.fav;
