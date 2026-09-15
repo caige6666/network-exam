@@ -3,16 +3,10 @@
    ================================================================ */
 const Result = { last: null };
 
-/* 解析渲染：解析里提到的正确答案字母加粗红黄底高亮 */
+/* 解析渲染：纯文本（加粗由 CSS 控制） */
 function analysisHtml(q) {
   if (!q.analysis) return "";
-  let t = esc(q.analysis);
-  const ans = (q.answer || "").trim().toUpperCase();
-  if (ans && /^[A-D]$/.test(ans)) {
-    const re = new RegExp("(?<![A-Za-z])" + ans + "(?![A-Za-z])", "g");
-    t = t.replace(re, '<mark class="hl-ans">' + ans + "</mark>");
-  }
-  return '<div class="qi-exp"><b>解析：</b>' + t + "</div>";
+  return '<div class="qi-exp"><b>解析：</b>' + esc(q.analysis) + "</div>";
 }
 
 /* ---------- 结果页 ---------- */
@@ -102,7 +96,7 @@ function renderBank() {
         '<span class="muted" style="margin-left:auto">#' + esc(q.id) + "</span>" +
       "</div>" +
       '<div class="qi-stem">' + esc(q.stem) + "</div>" +
-      (q.options || []).map((o, k) => '<div class="qi-opt"><span class="k">' + "ABCD"[k] + ".</span><span>" + esc(o) + "</span></div>").join("") +
+      (q.options || []).map((o, k) => '<div class="qi-opt' + ("ABCD"[k] === q.answer ? " qi-opt-ans" : "") + '"><span class="k">' + "ABCD"[k] + ".</span><span>" + esc(o) + "</span></div>").join("") +
       '<div class="qi-actions">' +
         '<button class="btn btn-ghost mini" data-exp="' + q.id + '">' + (exp ? "收起解析" : "查看解析") + "</button>" +
         '<button class="btn btn-ghost mini mini-fav' + (f ? " on" : "") + '" data-fav="' + q.id + '">' + (f ? I.star + " 已收藏" : I.starO + " 收藏") + "</button>" +
@@ -167,7 +161,7 @@ function renderWrong() {
       '<span class="badge badge-gray">' + esc(q.point || "综合") + "</span>" +
       '<span class="muted" style="margin-left:auto">最近 ' + fmtDate(w.last) + "</span></div>" +
       '<div class="qi-stem">' + esc(q.stem) + "</div>" +
-      (q.options || []).map((o, k) => '<div class="qi-opt"><span class="k">' + "ABCD"[k] + ".</span><span>" + esc(o) + "</span></div>").join("") +
+      (q.options || []).map((o, k) => '<div class="qi-opt' + ("ABCD"[k] === q.answer ? " qi-opt-ans" : "") + '"><span class="k">' + "ABCD"[k] + ".</span><span>" + esc(o) + "</span></div>").join("") +
       '<div class="qi-actions">' +
         '<button class="btn btn-ghost mini" data-wshow="' + q.id + '">查看解析</button>' +
         '<button class="btn btn-ghost mini mini-fav on" data-wdel="' + q.id + '">' + I.trash + " 移除</button>" +
@@ -206,7 +200,7 @@ function renderWrong() {
   $$("#view-wrong [data-wshow]").forEach(b => b.onclick = () => {
     const item = b.closest(".q-item"); const body = item.querySelector(".qi-body");
     const show = body.style.display !== "block";
-    body.style.display = show ? "block" : "none"; b.textContent = show ? "收起解析" : "查看解析";
+    body.style.display = show ? "block" : "none"; item.classList.toggle("exp", show); b.textContent = show ? "收起解析" : "查看解析";
   });
   $$("#view-wrong [data-wdel]").forEach(b => b.onclick = () => {
     DB.wrong = DB.wrong.filter(w => w.qid !== b.dataset.wdel); DB.save(); renderWrong(); toast("已移除", "ok");
