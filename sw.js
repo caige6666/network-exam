@@ -1,5 +1,5 @@
 /* 网工真题 · Service Worker：网络优先，自动更新 */
-const CACHE = "netexam-v2";
+const CACHE = "netexam-v3";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {

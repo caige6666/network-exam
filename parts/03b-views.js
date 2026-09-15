@@ -3,6 +3,18 @@
    ================================================================ */
 const Result = { last: null };
 
+/* 解析渲染：解析里提到的正确答案字母加粗红黄底高亮 */
+function analysisHtml(q) {
+  if (!q.analysis) return "";
+  let t = esc(q.analysis);
+  const ans = (q.answer || "").trim().toUpperCase();
+  if (ans && /^[A-D]$/.test(ans)) {
+    const re = new RegExp("(?<![A-Za-z])" + ans + "(?![A-Za-z])", "g");
+    t = t.replace(re, '<mark class="hl-ans">' + ans + "</mark>");
+  }
+  return '<div class="qi-exp"><b>解析：</b>' + t + "</div>";
+}
+
 /* ---------- 结果页 ---------- */
 function renderResult() {
   const r = Result.last;
@@ -74,7 +86,7 @@ function bankFiltered() {
 }
 function renderBank() {
   const years = AVAIL_SEMS;
-  const points = [...new Set(allBank().map(q => q.point))];
+  const points = [...new Set(allBank().map(q => q.point))].sort((a, b) => (POINTS.indexOf(a) < 0 ? 999 : POINTS.indexOf(a)) - (POINTS.indexOf(b) < 0 ? 999 : POINTS.indexOf(b)));
   const list = bankFiltered();
   const pages = Math.max(1, Math.ceil(list.length / BankUI.per));
   BankUI.page = Math.min(BankUI.page, pages);
@@ -97,7 +109,7 @@ function renderBank() {
       "</div>" +
       '<div class="qi-body">' +
         '<div>正确答案：<span class="qi-ans">' + q.answer + "</span></div>" +
-        (q.analysis ? '<div class="qi-exp"><b>解析：</b>' + esc(q.analysis) + "</div>" : "") +
+        analysisHtml(q) +
       "</div>" +
     "</div>";
   }).join("");
@@ -161,7 +173,7 @@ function renderWrong() {
         '<button class="btn btn-ghost mini mini-fav on" data-wdel="' + q.id + '">' + I.trash + " 移除</button>" +
       "</div>" +
       '<div class="qi-body" style="display:none"><div>正确答案：<span class="qi-ans">' + q.answer + "</span></div>" +
-      (q.analysis ? '<div class="qi-exp"><b>解析：</b>' + esc(q.analysis) + "</div>" : "") + "</div>" +
+      analysisHtml(q) + "</div>" +
     "</div>";
   }).join("");
   const totalWrong = DB.wrong.length;

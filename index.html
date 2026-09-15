@@ -253,6 +253,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .q-item .qi-ans{color:var(--ok);font-weight:700}
 .q-item .qi-exp{color:var(--text2);margin-top:6px}
 .q-item .qi-exp b{color:var(--text)}
+.hl-ans{background:#ffe08a;color:#c81e1e;font-weight:800;padding:0 5px;border-radius:4px;margin:0 1px;box-shadow:0 0 0 1px #f59e0b}
 .qi-actions{display:flex;gap:8px;margin-top:10px}
 .qi-actions .mini{padding:5px 11px;font-size:12.5px;border-radius:8px}
 .mini-fav.on{color:var(--warn);background:var(--warn-bg);border-color:var(--warn)}
@@ -7607,7 +7608,7 @@ const I = {
 const BANK = (typeof REAL_BANK !== "undefined" ? REAL_BANK : []).concat(typeof MOCK_BANK !== "undefined" ? MOCK_BANK : []);
 const BANK_MAP = {}; BANK.forEach(q => BANK_MAP[q.id] = q);
 const allBank = () => BANK.concat(EXTRA);
-const POINTS = ["计算机硬件","操作系统","系统开发与项目管理","法律法规与知识产权","数据通信基础","网络体系结构","局域网与交换","广域网与接入","网络层与路由","IP地址与子网","传输层","应用层协议","无线网络","网络安全","网络管理与监控","网络规划与布线","存储与新技术"];
+const POINTS = ["计算机硬件","操作系统","数据通信基础","网络体系结构","IP地址与子网","局域网与交换","广域网与接入","网络层与路由","传输层","应用层协议","网络安全","无线网络","网络管理与监控","网络规划与布线","系统开发与项目管理","存储与新技术","法律法规与知识产权"];
 const DIFF_TXT = ["", "易", "较易", "中等", "较难", "难"];
 
 /* ---------- 年份+场次 辅助 ---------- */
@@ -8021,6 +8022,18 @@ document.addEventListener("keydown", e => {
    ================================================================ */
 const Result = { last: null };
 
+/* 解析渲染：解析里提到的正确答案字母加粗红黄底高亮 */
+function analysisHtml(q) {
+  if (!q.analysis) return "";
+  let t = esc(q.analysis);
+  const ans = (q.answer || "").trim().toUpperCase();
+  if (ans && /^[A-D]$/.test(ans)) {
+    const re = new RegExp("(?<![A-Za-z])" + ans + "(?![A-Za-z])", "g");
+    t = t.replace(re, '<mark class="hl-ans">' + ans + "</mark>");
+  }
+  return '<div class="qi-exp"><b>解析：</b>' + t + "</div>";
+}
+
 /* ---------- 结果页 ---------- */
 function renderResult() {
   const r = Result.last;
@@ -8092,7 +8105,7 @@ function bankFiltered() {
 }
 function renderBank() {
   const years = AVAIL_SEMS;
-  const points = [...new Set(allBank().map(q => q.point))];
+  const points = [...new Set(allBank().map(q => q.point))].sort((a, b) => (POINTS.indexOf(a) < 0 ? 999 : POINTS.indexOf(a)) - (POINTS.indexOf(b) < 0 ? 999 : POINTS.indexOf(b)));
   const list = bankFiltered();
   const pages = Math.max(1, Math.ceil(list.length / BankUI.per));
   BankUI.page = Math.min(BankUI.page, pages);
@@ -8115,7 +8128,7 @@ function renderBank() {
       "</div>" +
       '<div class="qi-body">' +
         '<div>正确答案：<span class="qi-ans">' + q.answer + "</span></div>" +
-        (q.analysis ? '<div class="qi-exp"><b>解析：</b>' + esc(q.analysis) + "</div>" : "") +
+        analysisHtml(q) +
       "</div>" +
     "</div>";
   }).join("");
@@ -8179,7 +8192,7 @@ function renderWrong() {
         '<button class="btn btn-ghost mini mini-fav on" data-wdel="' + q.id + '">' + I.trash + " 移除</button>" +
       "</div>" +
       '<div class="qi-body" style="display:none"><div>正确答案：<span class="qi-ans">' + q.answer + "</span></div>" +
-      (q.analysis ? '<div class="qi-exp"><b>解析：</b>' + esc(q.analysis) + "</div>" : "") + "</div>" +
+      analysisHtml(q) + "</div>" +
     "</div>";
   }).join("");
   const totalWrong = DB.wrong.length;
